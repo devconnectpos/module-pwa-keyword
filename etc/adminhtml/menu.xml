@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="SM_PWAKeyword::keywords" title="Manage Keywords" translate="title" module="SM_PWAKeyword" sortOrder="10" parent="SM_PWA" action="adminhtml/keyword" dependsOnModule="SM_PWAKeyword" resource="SM_PWAKeyword::keywords"/>
+    </menu>
+</config>

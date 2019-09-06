@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="pwa_keyword_listing_data_source" xsi:type="string">SM\PWAKeyword\Model\ResourceModel\Keyword\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="SM\PWAKeyword\Model\ResourceModel\Keyword\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">sm_pwa_keyword</argument>
+            <argument name="eventPrefix" xsi:type="string">keyword_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">keyword_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">SM\PWAKeyword\Model\ResourceModel\Keyword</argument>
+        </arguments>
+    </type>
+    <virtualType name="KeywordGridDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+        <arguments>
+            <argument name="collection" xsi:type="object" shared="false">SM\PWAKeyword\Model\ResourceModel\Keyword\Collection</argument>
+            <argument name="filterPool" xsi:type="object" shared="false">PWAKeywordGridFilterPool</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PWAKeywordGridFilterPool" type="Magento\Framework\View\Element\UiComponent\DataProvider\FilterPool">
+        <arguments>
+            <argument name="appliers" xsi:type="array">
+                <item name="regular" xsi:type="object">Magento\Framework\View\Element\UiComponent\DataProvider\RegularFilter</item>
+                <item name="fulltext" xsi:type="object">Magento\Framework\View\Element\UiComponent\DataProvider\FulltextFilter</item>
+            </argument>
+        </arguments>
+    </virtualType>
+</config>
