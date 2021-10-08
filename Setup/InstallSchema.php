@@ -8,46 +8,85 @@
 
 namespace SM\PWAKeyword\Setup;
 
-
+use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
 {
+    /**
+     * @param SchemaSetupInterface   $setup
+     * @param ModuleContextInterface $context
+     *
+     * @throws \Zend_Db_Exception
+     */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
-        $installer = $setup;
-        $installer->startSetup();
-        $setup->getConnection()->dropTable($setup->getTable('sm_pwa_keyword'));
-        $table = $installer->getConnection()->newTable(
-            $installer->getTable('sm_pwa_keyword')
+        $this->addPWAKeywordTable($setup);
+    }
+
+    /**
+     * @param SchemaSetupInterface $setup
+     * @param OutputInterface      $output
+     *
+     * @throws \Zend_Db_Exception
+     */
+    public function execute(SchemaSetupInterface $setup, OutputInterface $output)
+    {
+        $output->writeln('  |__ Create PWA banner table');
+        $this->addPWAKeywordTable($setup);
+    }
+
+    /**
+     * @param SchemaSetupInterface $setup
+     *
+     * @throws \Zend_Db_Exception
+     */
+    protected function addPWAKeywordTable(SchemaSetupInterface $setup)
+    {
+        $setup->startSetup();
+
+        if ($setup->getConnection()->isTableExists($setup->getTable('sm_pwa_keyword'))) {
+            $setup->endSetup();
+
+            return;
+        }
+
+        $table = $setup->getConnection()->newTable(
+            $setup->getTable('sm_pwa_keyword')
         )->addColumn(
             'keyword_id',
-            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            Table::TYPE_INTEGER,
             null,
             ['identity' => true, 'nullable' => false, 'primary' => true, 'unsigned' => true,],
             'Keyword ID'
         )->addColumn(
             'text',
-            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            Table::TYPE_TEXT,
             255,
             ['nullable' => true, 'unsigned' => true,],
             'Text'
         )->addColumn(
-                'created_at',
-                \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
-                null,
-                ['nullable' => false, 'default' => \Magento\Framework\DB\Ddl\Table::TIMESTAMP_INIT,],
-                'Creation Time'
+            'created_at',
+            Table::TYPE_TIMESTAMP,
+            null,
+            ['nullable' => false, 'default' => Table::TIMESTAMP_INIT,],
+            'Creation Time'
         )->addColumn(
             'updated_at',
-            \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
+            Table::TYPE_TIMESTAMP,
             null,
-            ['nullable' => false, 'default' => \Magento\Framework\DB\Ddl\Table::TIMESTAMP_INIT_UPDATE,],
+            ['nullable' => false, 'default' => Table::TIMESTAMP_INIT_UPDATE,],
             'Modification Time'
+        )->addColumn(
+            'store',
+            Table::TYPE_TEXT,
+            null,
+            ['nullable' => true],
+            'Store Ids'
         );
-        $installer->getConnection()->createTable($table);
-
-        $installer->endSetup();
+        $setup->getConnection()->createTable($table);
+        $setup->endSetup();
     }
 }
