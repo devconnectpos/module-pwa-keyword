@@ -10,6 +10,7 @@ namespace SM\PWAKeyword\Repositories;
 
 
 use SM\Core\Api\Data\PWAKeyword;
+use SM\XRetail\Helper\DataConfig;
 use SM\XRetail\Repositories\Contract\ServiceAbstract;
 
 class PWAKeywordManagement extends ServiceAbstract
@@ -50,7 +51,7 @@ class PWAKeywordManagement extends ServiceAbstract
             foreach ($collection as $keyword) {
                 /* string $stores */
                 $stores = $keyword->getData('store');
-                $stores = explode(',', $stores);
+                $stores = explode(',', (string)$stores);
                 if(in_array('0', $stores) || in_array($storeId, $stores)) {
                     $k = new PWAKeyword();
                     $k->addData(
@@ -73,9 +74,9 @@ class PWAKeywordManagement extends ServiceAbstract
     public function getKeywordCollection($searchCriteria) {
         /** @var \SM\PWAKeyword\Model\ResourceModel\Keyword\Collection $collection */
         $collection = $this->_keywordFactory->create()->getCollection();
-        $collection->setCurPage(is_nan($searchCriteria->getData('currentPage')) ? 1 : $searchCriteria->getData('currentPage'));
+        $collection->setCurPage(is_nan((float)$searchCriteria->getData('currentPage')) ? 1 : $searchCriteria->getData('currentPage'));
         $collection->setPageSize(
-            is_nan($searchCriteria->getData('pageSize')) ? DataConfig::PAGE_SIZE_LOAD_CUSTOMER : $searchCriteria->getData('pageSize')
+            is_nan((float)$searchCriteria->getData('pageSize')) ? DataConfig::PAGE_SIZE_LOAD_CUSTOMER : $searchCriteria->getData('pageSize')
         );
 
         return $collection;
